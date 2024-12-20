@@ -1,0 +1,30 @@
+---
+- name: Configure Apache Webserver
+  hosts: webserver
+  become: yes
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - apache2
+          - git
+        state: present
+        update_cache: yes
+
+    - name: Clone website repository
+      git:
+        repo: "{{ git_repo }}"
+        dest: /var/www/html
+        force: yes
+
+    - name: Configure Apache virtual host
+      template:
+        src: templates/vhost.conf.j2
+        dest: /etc/apache2/sites-available/000-default.conf
+      notify: restart apache
+
+  handlers:
+    - name: restart apache
+      service:
+        name: apache2
+        state: restarted

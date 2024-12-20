@@ -1,0 +1,16 @@
+#cloud-config
+users:
+  - name: admin
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ${ssh_public_key}
+
+packages:
+  - apache2
+  - git
+
+runcmd:
+  - git clone https://github.com/rm77/web-sample-6.git /var/www/html/
+  - systemctl enable apache2
+  - systemctl start apache2
